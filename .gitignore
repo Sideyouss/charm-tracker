@@ -1,0 +1,16 @@
+/node_modules
+/.next
+/out
+/build
+.DS_Store
+*.pem
+.env
+.env*.local
+.vercel
+next-env.d.ts
+
+# Locally-collected TikTok snapshot (published to the `data` branch by CI)
+/data
+
+# Claude Code harness
+.claude/
