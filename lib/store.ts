@@ -13,15 +13,26 @@ import { dirname, join } from "node:path";
  */
 const FILE = join(process.cwd(), "data", "store.json");
 
+// Accept either naming convention: Vercel KV (KV_REST_API_*) or the Upstash
+// Redis integration (UPSTASH_REDIS_REST_*). Whichever is set, we use it.
+function kvCreds(): { url: string; token: string } | null {
+  const url = process.env.KV_REST_API_URL ?? process.env.UPSTASH_REDIS_REST_URL;
+  const token =
+    process.env.KV_REST_API_TOKEN ?? process.env.UPSTASH_REDIS_REST_TOKEN;
+  return url && token ? { url, token } : null;
+}
+
 function hasKv(): boolean {
-  return Boolean(process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN);
+  return kvCreds() !== null;
 }
 
 async function kvCommand(args: string[]): Promise<unknown> {
-  const res = await fetch(process.env.KV_REST_API_URL as string, {
+  const creds = kvCreds();
+  if (!creds) throw new Error("No KV credentials configured");
+  const res = await fetch(creds.url, {
     method: "POST",
     headers: {
-      Authorization: `Bearer ${process.env.KV_REST_API_TOKEN}`,
+      Authorization: `Bearer ${creds.token}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify(args),
