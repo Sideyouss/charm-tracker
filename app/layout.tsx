@@ -17,7 +17,6 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${GeistSans.variable} ${GeistMono.variable}`}>
       <body className="font-sans antialiased">
-        <div className="grain" aria-hidden />
         {children}
       </body>
     </html>

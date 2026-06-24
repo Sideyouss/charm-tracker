@@ -5,180 +5,123 @@ import AnimatedNumber from "./AnimatedNumber";
 
 type Accent = "money" | "reach";
 
-const ACCENT: Record<Accent, { text: string; bar: string; glow: string; track: string }> = {
-  money: {
-    text: "text-emerald-400",
-    bar: "bg-emerald-400",
-    glow: "shadow-[0_0_60px_-12px_rgba(52,211,153,0.45)]",
-    track: "bg-emerald-400/10",
-  },
-  reach: {
-    text: "text-blue-400",
-    bar: "bg-blue-400",
-    glow: "shadow-[0_0_60px_-12px_rgba(96,165,250,0.45)]",
-    track: "bg-blue-400/10",
-  },
+// One quiet tint per metric — on the bar and the percentage only. Enough to
+// tell the cards apart, never enough to shout.
+const ACCENT: Record<Accent, { bar: string; text: string; dot: string }> = {
+  money: { bar: "bg-emerald-400", text: "text-emerald-300", dot: "bg-emerald-400" },
+  reach: { bar: "bg-sky-400", text: "text-sky-300", dot: "bg-sky-400" },
 };
 
-interface SubStat {
+interface Stat {
   label: string;
   value: string;
 }
 
 interface Props {
   accent: Accent;
-  eyebrow: string;
-  objectiveLabel: string;
+  label: string;
+  meta: string;
   current: number;
   target: number;
   format: (n: number) => string;
-  formatRemaining: (n: number) => string;
-  subStats: SubStat[];
+  stats: Stat[];
   status: "ok" | "stale" | "error";
   loading: boolean;
-  note?: string;
 }
 
 export default function GoalCard({
   accent,
-  eyebrow,
-  objectiveLabel,
+  label,
+  meta,
   current,
   target,
   format,
-  formatRemaining,
-  subStats,
+  stats,
   status,
   loading,
-  note,
 }: Props) {
   const a = ACCENT[accent];
   const pct = target > 0 ? Math.min(100, (current / target) * 100) : 0;
-  const remaining = Math.max(0, target - current);
   const reached = current >= target;
+  const remaining = Math.max(0, target - current);
 
   return (
-    <section
-      className={`relative overflow-hidden rounded-[2rem] border border-white/[0.06] bg-ink-900/80 p-7 sm:p-9 ${a.glow}`}
-    >
-      <div className="sheen absolute inset-0" aria-hidden />
-
-      <div className="relative flex items-center justify-between">
-        <span className="text-xs font-medium uppercase tracking-[0.18em] text-white/45">
-          {eyebrow}
-        </span>
-        <StatusDot status={status} accent={a.text} />
+    <section className="group rounded-3xl border border-white/[0.06] bg-white/[0.015] p-7 transition-colors duration-300 hover:border-white/[0.1] sm:p-9">
+      <div className="flex items-center justify-between">
+        <div className="flex items-baseline gap-2.5">
+          <span className="text-[15px] font-medium text-white/80">{label}</span>
+          <span className="text-xs text-white/30">{meta}</span>
+        </div>
+        <StatusDot status={status} />
       </div>
 
       {loading ? (
-        <div className="relative mt-7 h-[64px] w-3/4 animate-pulse rounded-xl bg-white/[0.06]" />
+        <div className="mt-7 h-12 w-1/2 animate-pulse rounded-lg bg-white/[0.04]" />
       ) : (
-        <div className="relative mt-6 flex items-end gap-3">
+        <div className="mt-6 flex items-baseline gap-3">
           <AnimatedNumber
             value={current}
             format={format}
-            className={`font-mono text-5xl font-semibold leading-none tracking-tight sm:text-6xl ${a.text}`}
+            className="text-[2.75rem] font-semibold leading-none tracking-tight text-white sm:text-6xl"
           />
-          {reached && (
-            <span className="mb-1 rounded-full bg-white/10 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-white/70">
-              Goal hit
-            </span>
-          )}
         </div>
       )}
 
-      <div className="relative mt-7">
-        <div className={`h-2.5 w-full overflow-hidden rounded-full ${a.track}`}>
+      <div className="mt-8">
+        <div className="h-1 w-full overflow-hidden rounded-full bg-white/[0.07]">
           <motion.div
             className={`h-full origin-left rounded-full ${a.bar}`}
             initial={{ scaleX: 0 }}
             animate={{ scaleX: pct / 100 }}
-            transition={{ type: "spring", stiffness: 70, damping: 20 }}
+            transition={{ type: "spring", stiffness: 60, damping: 22 }}
             style={{ width: "100%" }}
           />
         </div>
-        <div className="mt-2.5 flex items-center justify-between text-sm">
-          <span className="tnum font-mono text-white/80">{pct.toFixed(1)}%</span>
-          <span className="text-white/45">
-            {objectiveLabel}{" "}
-            <span className="tnum font-mono text-white/70">{format(target)}</span>
-          </span>
+
+        <div className="mt-3.5 flex items-center justify-between text-sm">
+          <span className={`tnum font-medium ${a.text}`}>{pct.toFixed(1)}%</span>
+          <span className="tnum text-white/40">of {format(target)}</span>
         </div>
       </div>
 
-      <div className="relative mt-7 grid grid-cols-2 gap-px overflow-hidden rounded-xl bg-white/[0.05]">
-        <Cell
-          label={reached ? "Surplus" : "To go"}
-          value={
-            reached
-              ? formatRemaining(current - target)
-              : formatRemaining(remaining)
-          }
-        />
-        {subStats.slice(0, 1).map((s) => (
-          <Cell key={s.label} label={s.label} value={s.value} />
+      <p className="mt-5 text-sm text-white/45">
+        {reached ? (
+          <span className={a.text}>Goal reached</span>
+        ) : (
+          <>
+            <span className="tnum text-white/70">{format(remaining)}</span> to go
+          </>
+        )}
+      </p>
+
+      <div className="mt-7 grid grid-cols-2 gap-4 border-t border-white/[0.06] pt-6">
+        {stats.map((s) => (
+          <div key={s.label}>
+            <div className="text-xs uppercase tracking-wide text-white/30">
+              {s.label}
+            </div>
+            <div className="tnum mt-1.5 text-base text-white/80">
+              {loading ? "—" : s.value}
+            </div>
+          </div>
         ))}
       </div>
-
-      {subStats.length > 1 && (
-        <div className="relative mt-3 flex flex-wrap gap-x-6 gap-y-1 text-xs text-white/40">
-          {subStats.slice(1).map((s) => (
-            <span key={s.label}>
-              {s.label}:{" "}
-              <span className="tnum font-mono text-white/65">{s.value}</span>
-            </span>
-          ))}
-        </div>
-      )}
-
-      {note && (
-        <p className="relative mt-4 text-xs leading-relaxed text-amber-300/70">
-          {note}
-        </p>
-      )}
     </section>
   );
 }
 
-function Cell({ label, value }: SubStat) {
-  return (
-    <div className="bg-ink-900 px-4 py-3">
-      <div className="text-[11px] uppercase tracking-wide text-white/40">
-        {label}
-      </div>
-      <div className="tnum mt-0.5 font-mono text-lg text-white/90">{value}</div>
-    </div>
-  );
-}
-
-function StatusDot({
-  status,
-  accent,
-}: {
-  status: "ok" | "stale" | "error";
-  accent: string;
-}) {
+function StatusDot({ status }: { status: "ok" | "stale" | "error" }) {
   const map = {
-    ok: { color: accent, label: "Live" },
-    stale: { color: "text-amber-400", label: "Stale" },
-    error: { color: "text-red-400", label: "Error" },
+    ok: "bg-emerald-400",
+    stale: "bg-amber-400",
+    error: "bg-red-400",
   } as const;
-  const s = map[status];
   return (
-    <span className="flex items-center gap-2 text-[11px] uppercase tracking-wide text-white/40">
-      <span className="relative flex h-2 w-2">
-        {status === "ok" && (
-          <span
-            className={`absolute inline-flex h-full w-full animate-ping rounded-full ${s.color} opacity-60`}
-            style={{ backgroundColor: "currentColor" }}
-          />
-        )}
-        <span
-          className={`relative inline-flex h-2 w-2 rounded-full ${s.color}`}
-          style={{ backgroundColor: "currentColor" }}
-        />
-      </span>
-      {s.label}
+    <span className="relative flex h-1.5 w-1.5">
+      {status === "ok" && (
+        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400/60" />
+      )}
+      <span className={`relative inline-flex h-1.5 w-1.5 rounded-full ${map[status]}`} />
     </span>
   );
 }

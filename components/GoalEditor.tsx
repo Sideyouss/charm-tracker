@@ -85,7 +85,7 @@ export default function GoalEditor({ open, goals, onClose, onSaved }: Props) {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 16, scale: 0.98 }}
             transition={{ type: "spring", stiffness: 240, damping: 24 }}
-            className="relative w-full max-w-lg rounded-[1.75rem] border border-white/10 bg-ink-900 p-7 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]"
+            className="relative w-full max-w-lg rounded-2xl border border-white/[0.08] bg-ink-900 p-7"
           >
             <header className="flex items-start justify-between">
               <div>
@@ -184,14 +184,14 @@ export default function GoalEditor({ open, goals, onClose, onSaved }: Props) {
                 <button
                   type="button"
                   onClick={onClose}
-                  className="rounded-full px-4 py-2 text-sm text-white/55 transition hover:text-white/90"
+                  className="rounded-lg px-4 py-2 text-sm text-white/55 transition hover:text-white/90"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={saving}
-                  className="rounded-full bg-emerald-400 px-5 py-2 text-sm font-semibold text-ink-950 transition active:scale-[0.98] hover:bg-emerald-300 disabled:opacity-60"
+                  className="rounded-lg bg-white px-5 py-2 text-sm font-semibold text-ink-950 transition active:scale-[0.98] hover:bg-white/90 disabled:opacity-60"
                 >
                   {saving ? "Saving…" : "Save goals"}
                 </button>
@@ -205,7 +205,7 @@ export default function GoalEditor({ open, goals, onClose, onSaved }: Props) {
 }
 
 const inputCls =
-  "w-full rounded-xl border border-white/10 bg-white/[0.03] px-3.5 py-2.5 text-sm text-white outline-none transition placeholder:text-white/30 focus:border-emerald-400/50 focus:bg-white/[0.05]";
+  "w-full rounded-lg border border-white/10 bg-white/[0.03] px-3.5 py-2.5 text-sm text-white outline-none transition placeholder:text-white/30 focus:border-white/30 focus:bg-white/[0.05]";
 
 function Field({
   label,
@@ -218,9 +218,7 @@ function Field({
 }) {
   return (
     <label className={`flex flex-col gap-2 ${className ?? ""}`}>
-      <span className="text-xs font-medium uppercase tracking-wide text-white/45">
-        {label}
-      </span>
+      <span className="text-sm text-white/50">{label}</span>
       {children}
     </label>
   );

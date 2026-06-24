@@ -1,15 +1,10 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { GOALS, REFRESH_INTERVAL_MS } from "@/lib/config";
+import { REFRESH_INTERVAL_MS } from "@/lib/config";
 import { DEFAULT_GOALS, type GoalsConfig } from "@/lib/goals-shared";
 import type { RevenuePayload, ViewsPayload } from "@/lib/types";
-import {
-  formatCompact,
-  formatInt,
-  formatMoney,
-  timeAgo,
-} from "@/lib/format";
+import { formatCompact, formatInt, formatMoney, timeAgo } from "@/lib/format";
 import GoalCard from "./GoalCard";
 import GoalEditor from "./GoalEditor";
 
@@ -59,51 +54,39 @@ export default function Dashboard() {
   const loading = !revenue && !views;
 
   return (
-    <main className="relative mx-auto min-h-[100dvh] w-full max-w-[1400px] px-5 py-12 sm:px-8 sm:py-16">
-      <header className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <div className="flex items-center gap-2.5">
-            <span className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
-            <span className="text-sm font-medium uppercase tracking-[0.2em] text-white/50">
-              {goals.team} · Mission Control
-            </span>
-          </div>
-          <h1 className="mt-4 max-w-2xl text-3xl font-semibold leading-tight tracking-tight text-white sm:text-4xl">
-            {goals.tagline}
-          </h1>
-        </div>
-
-        <div className="flex shrink-0 items-center gap-3">
+    <main className="mx-auto w-full max-w-4xl px-6 py-14 sm:px-8 sm:py-20">
+      <header className="flex items-center justify-between">
+        <span className="text-sm font-medium tracking-tight text-white/90">
+          {goals.team}
+        </span>
+        <div className="flex items-center gap-1">
+          <SyncBadge lastSync={lastSync} error={error} onRefresh={load} />
           <button
             onClick={() => setEditing(true)}
-            className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-4 py-2 text-sm text-white/65 transition active:translate-y-[1px] hover:border-white/20 hover:bg-white/[0.06] hover:text-white/90"
+            className="rounded-full px-3 py-1.5 text-sm text-white/40 transition hover:text-white/80"
           >
-            Edit goals
+            Edit
           </button>
-          <SyncBadge lastSync={lastSync} error={error} onRefresh={load} />
         </div>
       </header>
 
-      <div className="mt-10 grid grid-cols-1 gap-6 lg:grid-cols-2">
+      <div className="mt-14 sm:mt-16">
+        <h1 className="max-w-xl text-balance text-2xl font-medium leading-snug tracking-tight text-white/90 sm:text-[1.75rem]">
+          {goals.tagline}
+        </h1>
+      </div>
+
+      <div className="mt-8 grid grid-cols-1 gap-4 sm:mt-10 lg:grid-cols-2">
         <GoalCard
           accent="money"
-          eyebrow={GOALS.revenue.label}
-          objectiveLabel={GOALS.revenue.objectiveLabel}
+          label="Revenue"
+          meta="RevenueCat"
           current={revenue?.total ?? 0}
           target={goals.revenueTarget}
           format={(n) => formatMoney(n, revenue?.currency ?? goals.currency)}
-          formatRemaining={(n) => formatMoney(n, revenue?.currency ?? goals.currency)}
           status={revenue?.status ?? "ok"}
           loading={loading}
-          note={revenue?.note}
-          subStats={[
-            {
-              label: "Last 28 days",
-              value:
-                revenue?.trailing28 != null
-                  ? formatMoney(revenue.trailing28, revenue.currency)
-                  : "—",
-            },
+          stats={[
             {
               label: "MRR",
               value:
@@ -111,38 +94,40 @@ export default function Dashboard() {
                   ? formatMoney(revenue.mrr, revenue.currency)
                   : "—",
             },
-            { label: "Source", value: revenue?.source ?? "—" },
+            {
+              label: "Last 28d",
+              value:
+                revenue?.trailing28 != null
+                  ? formatMoney(revenue.trailing28, revenue.currency)
+                  : "—",
+            },
           ]}
         />
 
         <GoalCard
           accent="reach"
-          eyebrow={`${GOALS.views.label} · last ${goals.windowDays} days`}
-          objectiveLabel={GOALS.views.objectiveLabel}
+          label="Reach"
+          meta={`TikTok · ${goals.windowDays}d`}
           current={views?.total ?? 0}
           target={goals.viewsTarget}
           format={(n) => formatCompact(n)}
-          formatRemaining={(n) => formatCompact(n)}
           status={views?.status ?? "ok"}
           loading={loading}
-          note={views?.note}
-          subStats={[
+          stats={[
             {
-              label: "Videos counted",
+              label: "Videos",
               value: views ? formatInt(views.videoCount) : "—",
             },
             {
-              label: "Exact",
+              label: "Exact views",
               value: views ? formatInt(views.total) : "—",
             },
-            { label: "Source", value: views?.source ?? "—" },
           ]}
         />
       </div>
 
-      <footer className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-white/35">
-        <span>Auto-refreshes every {Math.round(REFRESH_INTERVAL_MS / 1000)}s.</span>
-        <span>Revenue via RevenueCat · Reach via TikTok.</span>
+      <footer className="mt-10 text-sm text-white/25">
+        Auto-refreshing every {Math.round(REFRESH_INTERVAL_MS / 1000)}s.
       </footer>
 
       <GoalEditor
@@ -167,7 +152,8 @@ function SyncBadge({
   return (
     <button
       onClick={onRefresh}
-      className="group inline-flex items-center gap-2.5 rounded-full border border-white/10 bg-white/[0.03] px-4 py-2 text-sm text-white/70 transition active:translate-y-[1px] hover:border-white/20 hover:bg-white/[0.06]"
+      className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-sm text-white/40 transition hover:text-white/80"
+      title="Refresh"
     >
       <span
         className={`h-1.5 w-1.5 rounded-full ${
@@ -175,14 +161,7 @@ function SyncBadge({
         }`}
       />
       <span className="tnum">
-        {error
-          ? "Sync failed"
-          : lastSync
-            ? `Synced ${timeAgo(lastSync)}`
-            : "Syncing…"}
-      </span>
-      <span className="text-white/30 transition group-hover:text-white/60">
-        ↻
+        {error ? "Sync failed" : lastSync ? timeAgo(lastSync) : "Syncing…"}
       </span>
     </button>
   );
