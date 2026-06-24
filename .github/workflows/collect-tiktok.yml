@@ -45,9 +45,18 @@ jobs:
           git config user.name "tiktok-bot"
           git config user.email "actions@github.com"
           mkdir -p /tmp/pub && cp tiktok-views.json /tmp/pub/
+          # Drop the freshly-written (untracked) file so it can't block the
+          # checkout of a `data` branch that already tracks tiktok-views.json.
+          rm -f tiktok-views.json
           git fetch origin data || true
-          git checkout data 2>/dev/null || git checkout --orphan data
-          git rm -rf . 2>/dev/null || true
+          if git rev-parse --verify origin/data >/dev/null 2>&1; then
+            # Base the local branch on the remote tip so the push fast-forwards.
+            git checkout -B data origin/data
+          else
+            # First ever run: start the branch with a clean tree.
+            git checkout --orphan data
+            git rm -rf . 2>/dev/null || true
+          fi
           cp /tmp/pub/tiktok-views.json ./tiktok-views.json
           git add tiktok-views.json
           git commit -m "Update TikTok snapshot $(date -u +%FT%TZ)" || echo "no change"
