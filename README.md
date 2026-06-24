@@ -43,9 +43,11 @@ view counts via TikTok's signed mobile API. yt-dlp is a Python tool and can't
 run inside Vercel functions, so a GitHub Action runs it and the app reads the
 result.
 
-List your posted videos in `TIKTOK_VIDEO_URLS` (comma or newline separated) —
-that's your content "script" the tracker counts — and pick a provider with
-`TIKTOK_PROVIDER`:
+Set `TIKTOK_VIDEO_URLS` to your **profile URL** (e.g.
+`https://www.tiktok.com/@yourhandle`) — yt-dlp auto-discovers your recent videos,
+so new posts are counted automatically with no config changes. You can also list
+individual video URLs or mix both (comma/newline separated). Then pick a provider
+with `TIKTOK_PROVIDER`:
 
 - **`snapshot`** (recommended) — reads a JSON snapshot of view counts produced
   by `scripts/collect-tiktok.mjs` (yt-dlp). In production a GitHub Action
