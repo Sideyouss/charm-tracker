@@ -142,8 +142,8 @@ export default function Dashboard() {
         <GoalDial
           accent="reach"
           icon="reach"
-          label="Portée"
-          meta={`Vues TikTok · ${goals.windowDays} derniers jours`}
+          label="Vues"
+          meta={`TikTok · ${goals.windowDays} derniers jours`}
           current={views?.total ?? 0}
           target={goals.viewsTarget}
           format={(n) => formatCompact(n)}
