@@ -8,20 +8,15 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        bg: "#07080c",
         ink: {
-          950: "#0a0a0b",
-          900: "#111113",
-          800: "#1a1a1d",
-          700: "#26262b",
+          DEFAULT: "#f0f1f5",
+          700: "#c2c5cf",
+          500: "#9498a6",
+          400: "#6c7080",
         },
-        money: {
-          DEFAULT: "#34d399",
-          dim: "#0f3d2e",
-        },
-        reach: {
-          DEFAULT: "#60a5fa",
-          dim: "#10263f",
-        },
+        money: "#10b981",
+        reach: "#6366f1",
       },
       fontFamily: {
         sans: ["var(--font-geist-sans)", "system-ui", "sans-serif"],

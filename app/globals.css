@@ -4,33 +4,88 @@
 
 :root {
   color-scheme: dark;
+
+  --bg: #07080c;
+  --ink: #f0f1f5;
+  --money-1: 16, 185, 129;   /* emerald */
+  --money-2: 45, 212, 191;   /* teal */
+  --reach-1: 99, 102, 241;   /* indigo */
+  --reach-2: 56, 189, 248;   /* sky */
 }
 
 html,
 body {
-  background-color: #08080a;
-  color: #e6e6e8;
+  background-color: var(--bg);
+  color: var(--ink);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
 
-/* Two barely-there accent fields, fixed behind everything — depth, not noise. */
+/* Slow-breathing aurora — the cinematic light source behind everything. */
 body::before {
+  content: "";
+  position: fixed;
+  inset: -20%;
+  z-index: -2;
+  pointer-events: none;
+  background:
+    radial-gradient(40rem 30rem at 14% 6%, rgba(var(--money-1), 0.18), transparent 60%),
+    radial-gradient(38rem 28rem at 4% 80%, rgba(var(--money-2), 0.10), transparent 60%),
+    radial-gradient(42rem 32rem at 88% 92%, rgba(var(--reach-1), 0.18), transparent 60%),
+    radial-gradient(38rem 28rem at 98% 18%, rgba(var(--reach-2), 0.12), transparent 60%);
+  filter: blur(6px) saturate(120%);
+  animation: aurora 24s ease-in-out infinite alternate;
+}
+
+/* Fine film grain — the texture that keeps dark UIs from looking flat. */
+body::after {
   content: "";
   position: fixed;
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  background:
-    radial-gradient(50rem 32rem at 12% -8%, rgba(52, 211, 153, 0.07), transparent 60%),
-    radial-gradient(46rem 30rem at 92% 108%, rgba(56, 189, 248, 0.07), transparent 60%);
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
-/* Tabular figures so animated counters don't jitter width. */
+@keyframes aurora {
+  0%   { transform: translate3d(0, 0, 0) scale(1); }
+  50%  { transform: translate3d(2%, -2%, 0) scale(1.05); }
+  100% { transform: translate3d(-2%, 2%, 0) scale(1.03); }
+}
+
 .tnum {
   font-variant-numeric: tabular-nums;
 }
 
+.text-gradient {
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Frosted glass surface for the cards. */
+.glass {
+  background:
+    linear-gradient(165deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.015) 45%, rgba(255, 255, 255, 0.03));
+  backdrop-filter: blur(14px) saturate(130%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 24px 60px -28px rgba(0, 0, 0, 0.85);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body::before { animation: none; }
+}
+
 ::selection {
-  background: rgba(255, 255, 255, 0.14);
+  background: rgba(99, 102, 241, 0.32);
+}
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.10);
+  border-radius: 9999px;
+  border: 3px solid transparent;
+  background-clip: content-box;
 }

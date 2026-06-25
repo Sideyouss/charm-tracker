@@ -73,7 +73,7 @@ export default function GoalEditor({ open, goals, onClose, onSaved }: Props) {
           exit={{ opacity: 0 }}
         >
           <div
-            className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+            className="absolute inset-0 bg-black/65 backdrop-blur-md"
             onClick={onClose}
             aria-hidden
           />
@@ -85,20 +85,16 @@ export default function GoalEditor({ open, goals, onClose, onSaved }: Props) {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 16, scale: 0.98 }}
             transition={{ type: "spring", stiffness: 240, damping: 24 }}
-            className="relative w-full max-w-lg rounded-2xl border border-white/[0.08] bg-ink-900 p-7"
+            className="glass relative w-full max-w-lg rounded-3xl p-7"
           >
             <header className="flex items-start justify-between">
               <div>
-                <h2 className="text-lg font-semibold tracking-tight text-white">
-                  Edit goals
-                </h2>
-                <p className="mt-1 text-sm text-white/45">
-                  Changes go live for the whole team.
-                </p>
+                <h2 className="font-display text-xl font-bold tracking-tight text-ink">Edit goals</h2>
+                <p className="mt-1 text-sm text-ink-400">Changes go live for the whole team.</p>
               </div>
               <button
                 onClick={onClose}
-                className="rounded-full px-2 py-1 text-white/40 transition hover:text-white/80"
+                className="grid h-8 w-8 place-items-center rounded-full text-ink-400 transition hover:bg-white/10 hover:text-ink"
                 aria-label="Close"
               >
                 ✕
@@ -123,13 +119,13 @@ export default function GoalEditor({ open, goals, onClose, onSaved }: Props) {
                 />
               </Field>
 
-              <Field label="Revenue objective">
+              <Field label="Revenue goal">
                 <input
                   type="number"
                   min={1}
                   value={form.revenueTarget}
                   onChange={(e) => set("revenueTarget", Number(e.target.value))}
-                  className={`${inputCls} font-mono`}
+                  className={`${inputCls} tnum`}
                 />
               </Field>
 
@@ -138,17 +134,17 @@ export default function GoalEditor({ open, goals, onClose, onSaved }: Props) {
                   value={form.currency}
                   onChange={(e) => set("currency", e.target.value.toUpperCase())}
                   maxLength={3}
-                  className={`${inputCls} font-mono uppercase`}
+                  className={`${inputCls} uppercase`}
                 />
               </Field>
 
-              <Field label="Views target">
+              <Field label="Views goal">
                 <input
                   type="number"
                   min={1}
                   value={form.viewsTarget}
                   onChange={(e) => set("viewsTarget", Number(e.target.value))}
-                  className={`${inputCls} font-mono`}
+                  className={`${inputCls} tnum`}
                 />
               </Field>
 
@@ -159,7 +155,7 @@ export default function GoalEditor({ open, goals, onClose, onSaved }: Props) {
                   max={365}
                   value={form.windowDays}
                   onChange={(e) => set("windowDays", Number(e.target.value))}
-                  className={`${inputCls} font-mono`}
+                  className={`${inputCls} tnum`}
                 />
               </Field>
 
@@ -175,7 +171,7 @@ export default function GoalEditor({ open, goals, onClose, onSaved }: Props) {
               </Field>
 
               {error && (
-                <p className="col-span-2 rounded-lg border border-red-400/20 bg-red-400/5 px-3 py-2 text-sm text-red-300">
+                <p className="col-span-2 rounded-xl border border-red-400/25 bg-red-500/10 px-3 py-2 text-sm text-red-300">
                   {error}
                 </p>
               )}
@@ -184,14 +180,14 @@ export default function GoalEditor({ open, goals, onClose, onSaved }: Props) {
                 <button
                   type="button"
                   onClick={onClose}
-                  className="rounded-lg px-4 py-2 text-sm text-white/55 transition hover:text-white/90"
+                  className="rounded-xl px-4 py-2.5 text-sm font-medium text-ink-500 transition hover:text-ink"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={saving}
-                  className="rounded-lg bg-white px-5 py-2 text-sm font-semibold text-ink-950 transition active:scale-[0.98] hover:bg-white/90 disabled:opacity-60"
+                  className="rounded-xl bg-gradient-to-r from-money to-reach px-5 py-2.5 text-sm font-semibold text-white shadow-[0_6px_18px_-4px_rgba(99,102,241,0.5)] transition hover:brightness-105 active:scale-[0.98] disabled:opacity-60"
                 >
                   {saving ? "Saving…" : "Save goals"}
                 </button>
@@ -205,7 +201,7 @@ export default function GoalEditor({ open, goals, onClose, onSaved }: Props) {
 }
 
 const inputCls =
-  "w-full rounded-lg border border-white/10 bg-white/[0.03] px-3.5 py-2.5 text-sm text-white outline-none transition placeholder:text-white/30 focus:border-white/30 focus:bg-white/[0.05]";
+  "w-full rounded-xl border border-white/10 bg-white/[0.04] px-3.5 py-2.5 text-sm text-ink outline-none transition placeholder:text-ink-400 focus:border-reach/60 focus:bg-white/[0.07] focus:ring-2 focus:ring-reach/20";
 
 function Field({
   label,
@@ -217,8 +213,8 @@ function Field({
   className?: string;
 }) {
   return (
-    <label className={`flex flex-col gap-2 ${className ?? ""}`}>
-      <span className="text-sm text-white/50">{label}</span>
+    <label className={`flex flex-col gap-1.5 ${className ?? ""}`}>
+      <span className="text-sm font-medium text-ink-500">{label}</span>
       {children}
     </label>
   );
