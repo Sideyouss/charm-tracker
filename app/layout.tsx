@@ -1,8 +1,15 @@
 import type { Metadata } from "next";
 import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
+import { Space_Grotesk } from "next/font/google";
 import { BRAND } from "@/lib/config";
 import "./globals.css";
+
+const display = Space_Grotesk({
+  subsets: ["latin"],
+  weight: ["500", "600", "700"],
+  variable: "--font-display",
+});
 
 export const metadata: Metadata = {
   title: `${BRAND.team} — Goal Tracker`,
@@ -15,7 +22,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${GeistSans.variable} ${GeistMono.variable}`}>
+    <html
+      lang="en"
+      className={`${GeistSans.variable} ${GeistMono.variable} ${display.variable}`}
+    >
       <body className="font-sans antialiased">
         {children}
       </body>

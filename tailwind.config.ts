@@ -26,6 +26,7 @@ const config: Config = {
       fontFamily: {
         sans: ["var(--font-geist-sans)", "system-ui", "sans-serif"],
         mono: ["var(--font-geist-mono)", "ui-monospace", "monospace"],
+        display: ["var(--font-display)", "var(--font-geist-sans)", "sans-serif"],
       },
     },
   },

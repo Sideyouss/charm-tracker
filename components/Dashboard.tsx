@@ -62,16 +62,17 @@ export default function Dashboard() {
         transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
         className="flex items-center justify-between"
       >
-        <span className="text-sm font-semibold tracking-tight text-white/90">
+        <span className="font-display text-base font-semibold tracking-tight text-white/90">
           {goals.team}
         </span>
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-2">
           <SyncBadge lastSync={lastSync} error={error} onRefresh={load} />
           <button
             onClick={() => setEditing(true)}
-            className="rounded-full px-3 py-1.5 text-sm text-white/40 transition hover:text-white/80 active:scale-95"
+            className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.05] px-4 py-1.5 text-sm font-medium text-white/85 transition hover:border-white/25 hover:bg-white/[0.09] active:scale-95"
           >
-            Edit
+            <PencilIcon />
+            Edit goals
           </button>
         </div>
       </motion.header>
@@ -81,7 +82,7 @@ export default function Dashboard() {
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.05, ease: [0.16, 1, 0.3, 1] }}
-          className="mb-14 max-w-xl text-balance text-xl font-medium leading-snug tracking-tight text-white/55 sm:mb-20 sm:text-2xl"
+          className="mb-14 max-w-xl text-balance font-display text-2xl font-medium leading-snug tracking-tight text-white/60 sm:mb-20 sm:text-3xl"
         >
           {goals.tagline}
         </motion.h1>
@@ -125,6 +126,25 @@ export default function Dashboard() {
         onSaved={(next) => setGoals(next)}
       />
     </main>
+  );
+}
+
+function PencilIcon() {
+  return (
+    <svg
+      width="13"
+      height="13"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+    >
+      <path d="M12 20h9" />
+      <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" />
+    </svg>
   );
 }
 

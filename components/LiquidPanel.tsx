@@ -105,11 +105,13 @@ function LiquidPanel({
           <AnimatedNumber
             value={current}
             format={format}
-            className="block text-6xl font-semibold leading-[0.9] tracking-tighter text-white drop-shadow-[0_2px_20px_rgba(0,0,0,0.4)] sm:text-7xl"
+            className="block font-display text-6xl font-semibold leading-[0.9] tracking-tight text-white drop-shadow-[0_2px_20px_rgba(0,0,0,0.4)] sm:text-7xl"
           />
         )}
         <div className="mt-4 flex items-baseline gap-3">
-          <span className={`tnum text-3xl font-semibold tracking-tight ${c.text}`}>
+          <span
+            className={`tnum font-display text-3xl font-semibold tracking-tight ${c.text}`}
+          >
             {pct.toFixed(0)}%
           </span>
           <span className="text-sm text-white/55">
