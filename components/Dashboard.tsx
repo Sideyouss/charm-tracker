@@ -39,7 +39,7 @@ export default function Dashboard() {
       setLastSync(new Date().toISOString());
       setError(null);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Failed to sync");
+      setError(e instanceof Error ? e.message : "Échec de la synchronisation");
     }
   }, []);
 
@@ -65,13 +65,13 @@ export default function Dashboard() {
   const moneyChips: Chip[] = [];
   if (revenue?.mrr != null) moneyChips.push({ label: "MRR", value: formatMoney(revenue.mrr, currency) });
   if (revenue?.trailing28 != null)
-    moneyChips.push({ label: "Last 28 days", value: formatMoney(revenue.trailing28, currency) });
+    moneyChips.push({ label: "28 derniers jours", value: formatMoney(revenue.trailing28, currency) });
 
   const reachChips: Chip[] = [];
   if (views?.videoCount != null)
-    reachChips.push({ label: "Videos", value: formatInt(views.videoCount) });
+    reachChips.push({ label: "Vidéos", value: formatInt(views.videoCount) });
   if (views?.total != null)
-    reachChips.push({ label: `Avg / video`, value: formatCompact(views.videoCount ? views.total / views.videoCount : 0) });
+    reachChips.push({ label: `Moy. / vidéo`, value: formatCompact(views.videoCount ? views.total / views.videoCount : 0) });
 
   return (
     <main className="mx-auto flex min-h-[100dvh] w-full max-w-5xl flex-col px-5 py-7 sm:px-8 sm:py-10">
@@ -93,7 +93,7 @@ export default function Dashboard() {
             className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.05] px-4 py-1.5 text-sm font-medium text-ink-700 backdrop-blur-sm transition hover:border-white/25 hover:bg-white/[0.09] active:scale-95"
           >
             <PencilIcon />
-            Edit goals
+            Modifier les objectifs
           </button>
         </div>
       </motion.header>
@@ -118,7 +118,7 @@ export default function Dashboard() {
             />
           </div>
           <span className="tnum text-sm font-semibold text-ink-700">
-            {loading ? "—" : `${overall}% to both goals`}
+            {loading ? "—" : `${overall}% des deux objectifs`}
           </span>
         </div>
       </motion.div>
@@ -128,8 +128,8 @@ export default function Dashboard() {
         <GoalDial
           accent="money"
           icon="money"
-          label="Revenue"
-          meta="from RevenueCat"
+          label="Revenus"
+          meta="via RevenueCat"
           current={revenue?.total ?? 0}
           target={goals.revenueTarget}
           format={(n) => formatMoney(n, currency)}
@@ -142,8 +142,8 @@ export default function Dashboard() {
         <GoalDial
           accent="reach"
           icon="reach"
-          label="Reach"
-          meta={`TikTok views · last ${goals.windowDays} days`}
+          label="Portée"
+          meta={`Vues TikTok · ${goals.windowDays} derniers jours`}
           current={views?.total ?? 0}
           target={goals.viewsTarget}
           format={(n) => formatCompact(n)}
@@ -161,7 +161,7 @@ export default function Dashboard() {
         transition={{ duration: 0.6, delay: 0.4 }}
         className="mt-8 flex items-center justify-between text-xs text-ink-400"
       >
-        <span>Updates automatically every {Math.round(REFRESH_INTERVAL_MS / 1000)} seconds</span>
+        <span>Mise à jour automatique toutes les {Math.round(REFRESH_INTERVAL_MS / 1000)} secondes</span>
         <span>{goals.team}</span>
       </motion.footer>
 
@@ -208,10 +208,10 @@ function SyncBadge({
     <button
       onClick={onRefresh}
       className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-sm text-ink-400 transition hover:text-ink-700 active:scale-95"
-      title="Refresh now"
+      title="Actualiser"
     >
       <span className={`h-1.5 w-1.5 rounded-full ${error ? "bg-red-500" : "bg-emerald-500"}`} />
-      <span className="tnum">{error ? "Sync failed" : lastSync ? `Synced ${timeAgo(lastSync)}` : "Syncing…"}</span>
+      <span className="tnum">{error ? "Échec de synchro" : lastSync ? `Synchronisé ${timeAgo(lastSync)}` : "Synchronisation…"}</span>
     </button>
   );
 }

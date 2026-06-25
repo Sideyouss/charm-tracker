@@ -163,7 +163,7 @@ function GoalDial({
               className="font-display text-[2.5rem] font-bold leading-none tracking-tight text-white drop-shadow-[0_2px_16px_rgba(0,0,0,0.5)]"
             />
           )}
-          <div className="mt-2 text-[0.8rem] font-medium text-ink-400">of {format(target)}</div>
+          <div className="mt-2 text-[0.8rem] font-medium text-ink-400">sur {format(target)}</div>
         </div>
       </div>
 
@@ -177,10 +177,10 @@ function GoalDial({
         </span>
         <span className="text-sm text-ink-500">
           {reached ? (
-            <span className={`font-semibold ${t.text}`}>Goal reached 🎉</span>
+            <span className={`font-semibold ${t.text}`}>Objectif atteint 🎉</span>
           ) : (
             <>
-              <span className="tnum font-semibold text-ink-700">{format(remaining)}</span> to go
+              <span className="tnum font-semibold text-ink-700">{format(remaining)}</span> restants
             </>
           )}
         </span>
@@ -203,9 +203,9 @@ function GoalDial({
 
 function StatusPill({ status, a }: { status: "ok" | "stale" | "error"; a: string }) {
   const map = {
-    ok: { dot: `rgb(${a})`, text: "Live", cls: "text-emerald-300" },
-    stale: { dot: "#fbbf24", text: "Stale", cls: "text-amber-300" },
-    error: { dot: "#f87171", text: "Error", cls: "text-red-300" },
+    ok: { dot: `rgb(${a})`, text: "En direct", cls: "text-emerald-300" },
+    stale: { dot: "#fbbf24", text: "Obsolète", cls: "text-amber-300" },
+    error: { dot: "#f87171", text: "Erreur", cls: "text-red-300" },
   }[status];
   return (
     <span className={`inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-1 text-xs font-medium ${map.cls}`}>

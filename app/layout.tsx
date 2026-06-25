@@ -12,7 +12,7 @@ const display = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: `${BRAND.team} — Goal Tracker`,
+  title: `${BRAND.team} — Suivi des objectifs`,
   description: BRAND.tagline,
 };
 
@@ -23,7 +23,7 @@ export default function RootLayout({
 }) {
   return (
     <html
-      lang="en"
+      lang="fr"
       className={`${GeistSans.variable} ${GeistMono.variable} ${display.variable}`}
     >
       <body className="font-sans antialiased">

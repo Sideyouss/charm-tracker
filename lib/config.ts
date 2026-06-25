@@ -5,7 +5,7 @@
 
 export const BRAND = {
   team: "Charm",
-  tagline: "One screen. Two numbers that matter. Until we hit them.",
+  tagline: "Un écran. Deux chiffres qui comptent. Jusqu'à les atteindre.",
 };
 
 export const GOALS = {

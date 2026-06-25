@@ -52,12 +52,12 @@ export default function GoalEditor({ open, goals, onClose, onSaved }: Props) {
         body: JSON.stringify({ ...form, password }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error ?? `Save failed (${res.status})`);
+      if (!res.ok) throw new Error(data.error ?? `Échec de l'enregistrement (${res.status})`);
       sessionStorage.setItem(PW_KEY, password);
       onSaved(data as GoalsConfig);
       onClose();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Save failed");
+      setError(err instanceof Error ? err.message : "Échec de l'enregistrement");
     } finally {
       setSaving(false);
     }
@@ -80,7 +80,7 @@ export default function GoalEditor({ open, goals, onClose, onSaved }: Props) {
           <motion.div
             role="dialog"
             aria-modal="true"
-            aria-label="Edit goals"
+            aria-label="Modifier les objectifs"
             initial={{ opacity: 0, y: 16, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 16, scale: 0.98 }}
@@ -89,20 +89,20 @@ export default function GoalEditor({ open, goals, onClose, onSaved }: Props) {
           >
             <header className="flex items-start justify-between">
               <div>
-                <h2 className="font-display text-xl font-bold tracking-tight text-ink">Edit goals</h2>
-                <p className="mt-1 text-sm text-ink-400">Changes go live for the whole team.</p>
+                <h2 className="font-display text-xl font-bold tracking-tight text-ink">Modifier les objectifs</h2>
+                <p className="mt-1 text-sm text-ink-400">Les modifications sont visibles par toute l'équipe.</p>
               </div>
               <button
                 onClick={onClose}
                 className="grid h-8 w-8 place-items-center rounded-full text-ink-400 transition hover:bg-white/10 hover:text-ink"
-                aria-label="Close"
+                aria-label="Fermer"
               >
                 ✕
               </button>
             </header>
 
             <form onSubmit={submit} className="mt-6 grid grid-cols-2 gap-4">
-              <Field className="col-span-2" label="Team name">
+              <Field className="col-span-2" label="Nom de l'équipe">
                 <input
                   ref={firstField}
                   value={form.team}
@@ -111,7 +111,7 @@ export default function GoalEditor({ open, goals, onClose, onSaved }: Props) {
                 />
               </Field>
 
-              <Field className="col-span-2" label="Tagline">
+              <Field className="col-span-2" label="Slogan">
                 <input
                   value={form.tagline}
                   onChange={(e) => set("tagline", e.target.value)}
@@ -119,7 +119,7 @@ export default function GoalEditor({ open, goals, onClose, onSaved }: Props) {
                 />
               </Field>
 
-              <Field label="Revenue goal">
+              <Field label="Objectif de revenus">
                 <input
                   type="number"
                   min={1}
@@ -129,7 +129,7 @@ export default function GoalEditor({ open, goals, onClose, onSaved }: Props) {
                 />
               </Field>
 
-              <Field label="Currency">
+              <Field label="Devise">
                 <input
                   value={form.currency}
                   onChange={(e) => set("currency", e.target.value.toUpperCase())}
@@ -138,7 +138,7 @@ export default function GoalEditor({ open, goals, onClose, onSaved }: Props) {
                 />
               </Field>
 
-              <Field label="Views goal">
+              <Field label="Objectif de vues">
                 <input
                   type="number"
                   min={1}
@@ -148,7 +148,7 @@ export default function GoalEditor({ open, goals, onClose, onSaved }: Props) {
                 />
               </Field>
 
-              <Field label="Window (days)">
+              <Field label="Fenêtre (jours)">
                 <input
                   type="number"
                   min={1}
@@ -159,12 +159,12 @@ export default function GoalEditor({ open, goals, onClose, onSaved }: Props) {
                 />
               </Field>
 
-              <Field className="col-span-2" label="Edit password">
+              <Field className="col-span-2" label="Mot de passe">
                 <input
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Shared team password"
+                  placeholder="Mot de passe partagé de l'équipe"
                   className={inputCls}
                   autoComplete="current-password"
                 />
@@ -182,14 +182,14 @@ export default function GoalEditor({ open, goals, onClose, onSaved }: Props) {
                   onClick={onClose}
                   className="rounded-xl px-4 py-2.5 text-sm font-medium text-ink-500 transition hover:text-ink"
                 >
-                  Cancel
+                  Annuler
                 </button>
                 <button
                   type="submit"
                   disabled={saving}
                   className="rounded-xl bg-gradient-to-r from-money to-reach px-5 py-2.5 text-sm font-semibold text-white shadow-[0_6px_18px_-4px_rgba(99,102,241,0.5)] transition hover:brightness-105 active:scale-[0.98] disabled:opacity-60"
                 >
-                  {saving ? "Saving…" : "Save goals"}
+                  {saving ? "Enregistrement…" : "Enregistrer"}
                 </button>
               </div>
             </form>
