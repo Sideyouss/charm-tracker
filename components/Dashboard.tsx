@@ -1,10 +1,11 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import { REFRESH_INTERVAL_MS } from "@/lib/config";
 import { DEFAULT_GOALS, type GoalsConfig } from "@/lib/goals-shared";
 import type { RevenuePayload, ViewsPayload } from "@/lib/types";
-import { formatCompact, formatInt, formatMoney, timeAgo } from "@/lib/format";
+import { formatCompact, formatMoney, timeAgo } from "@/lib/format";
 import GoalCard from "./GoalCard";
 import GoalEditor from "./GoalEditor";
 
@@ -54,80 +55,68 @@ export default function Dashboard() {
   const loading = !revenue && !views;
 
   return (
-    <main className="mx-auto w-full max-w-4xl px-6 py-14 sm:px-8 sm:py-20">
-      <header className="flex items-center justify-between">
-        <span className="text-sm font-medium tracking-tight text-white/90">
+    <main className="mx-auto flex min-h-[100dvh] w-full max-w-5xl flex-col px-6 py-8 sm:px-10 sm:py-10">
+      <motion.header
+        initial={{ opacity: 0, y: -12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+        className="flex items-center justify-between"
+      >
+        <span className="text-sm font-semibold tracking-tight text-white/90">
           {goals.team}
         </span>
         <div className="flex items-center gap-1">
           <SyncBadge lastSync={lastSync} error={error} onRefresh={load} />
           <button
             onClick={() => setEditing(true)}
-            className="rounded-full px-3 py-1.5 text-sm text-white/40 transition hover:text-white/80"
+            className="rounded-full px-3 py-1.5 text-sm text-white/40 transition hover:text-white/80 active:scale-95"
           >
             Edit
           </button>
         </div>
-      </header>
+      </motion.header>
 
-      <div className="mt-14 sm:mt-16">
-        <h1 className="max-w-xl text-balance text-2xl font-medium leading-snug tracking-tight text-white/90 sm:text-[1.75rem]">
+      <section className="flex flex-1 flex-col justify-center py-14">
+        <motion.h1
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.05, ease: [0.16, 1, 0.3, 1] }}
+          className="mb-14 max-w-xl text-balance text-xl font-medium leading-snug tracking-tight text-white/55 sm:mb-20 sm:text-2xl"
+        >
           {goals.tagline}
-        </h1>
-      </div>
+        </motion.h1>
 
-      <div className="mt-8 grid grid-cols-1 gap-4 sm:mt-10 lg:grid-cols-2">
-        <GoalCard
-          accent="money"
-          label="Revenue"
-          meta="RevenueCat"
-          current={revenue?.total ?? 0}
-          target={goals.revenueTarget}
-          format={(n) => formatMoney(n, revenue?.currency ?? goals.currency)}
-          status={revenue?.status ?? "ok"}
-          loading={loading}
-          stats={[
-            {
-              label: "MRR",
-              value:
-                revenue?.mrr != null
-                  ? formatMoney(revenue.mrr, revenue.currency)
-                  : "—",
-            },
-            {
-              label: "Last 28d",
-              value:
-                revenue?.trailing28 != null
-                  ? formatMoney(revenue.trailing28, revenue.currency)
-                  : "—",
-            },
-          ]}
-        />
+        <div className="flex flex-col gap-14 sm:gap-20">
+          <GoalCard
+            accent="money"
+            label="Revenue"
+            meta="RevenueCat"
+            current={revenue?.total ?? 0}
+            target={goals.revenueTarget}
+            format={(n) => formatMoney(n, revenue?.currency ?? goals.currency)}
+            status={revenue?.status ?? "ok"}
+            loading={loading}
+          />
 
-        <GoalCard
-          accent="reach"
-          label="Reach"
-          meta={`TikTok · ${goals.windowDays}d`}
-          current={views?.total ?? 0}
-          target={goals.viewsTarget}
-          format={(n) => formatCompact(n)}
-          status={views?.status ?? "ok"}
-          loading={loading}
-          stats={[
-            {
-              label: "Videos",
-              value: views ? formatInt(views.videoCount) : "—",
-            },
-            {
-              label: "Exact views",
-              value: views ? formatInt(views.total) : "—",
-            },
-          ]}
-        />
-      </div>
+          <div className="h-px w-full bg-gradient-to-r from-transparent via-white/[0.08] to-transparent" />
 
-      <footer className="mt-10 text-sm text-white/25">
-        Auto-refreshing every {Math.round(REFRESH_INTERVAL_MS / 1000)}s.
+          <GoalCard
+            accent="reach"
+            label="Reach"
+            meta={`TikTok · ${goals.windowDays}d`}
+            current={views?.total ?? 0}
+            target={goals.viewsTarget}
+            format={(n) => formatCompact(n)}
+            status={views?.status ?? "ok"}
+            loading={loading}
+            mirror
+          />
+        </div>
+      </section>
+
+      <footer className="flex items-center justify-between text-xs text-white/25">
+        <span>Live • auto-refreshing every {Math.round(REFRESH_INTERVAL_MS / 1000)}s</span>
+        <span className="tnum">{goals.team.toLowerCase()}</span>
       </footer>
 
       <GoalEditor
@@ -152,7 +141,7 @@ function SyncBadge({
   return (
     <button
       onClick={onRefresh}
-      className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-sm text-white/40 transition hover:text-white/80"
+      className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-sm text-white/40 transition hover:text-white/80 active:scale-95"
       title="Refresh"
     >
       <span
