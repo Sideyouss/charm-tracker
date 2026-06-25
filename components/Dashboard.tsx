@@ -6,7 +6,7 @@ import { REFRESH_INTERVAL_MS } from "@/lib/config";
 import { DEFAULT_GOALS, type GoalsConfig } from "@/lib/goals-shared";
 import type { RevenuePayload, ViewsPayload } from "@/lib/types";
 import { formatCompact, formatMoney, timeAgo } from "@/lib/format";
-import GoalCard from "./GoalCard";
+import LiquidPanel from "./LiquidPanel";
 import GoalEditor from "./GoalEditor";
 
 async function fetchJson<T>(url: string): Promise<T> {
@@ -55,7 +55,7 @@ export default function Dashboard() {
   const loading = !revenue && !views;
 
   return (
-    <main className="mx-auto flex min-h-[100dvh] w-full max-w-5xl flex-col px-6 py-8 sm:px-10 sm:py-10">
+    <main className="mx-auto flex min-h-[100dvh] w-full max-w-6xl flex-col px-6 py-8 sm:px-10 sm:py-10">
       <motion.header
         initial={{ opacity: 0, y: -12 }}
         animate={{ opacity: 1, y: 0 }}
@@ -86,8 +86,8 @@ export default function Dashboard() {
           {goals.tagline}
         </motion.h1>
 
-        <div className="flex flex-col gap-14 sm:gap-20">
-          <GoalCard
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+          <LiquidPanel
             accent="money"
             label="Revenue"
             meta="RevenueCat"
@@ -96,11 +96,10 @@ export default function Dashboard() {
             format={(n) => formatMoney(n, revenue?.currency ?? goals.currency)}
             status={revenue?.status ?? "ok"}
             loading={loading}
+            delay={0.1}
           />
 
-          <div className="h-px w-full bg-gradient-to-r from-transparent via-white/[0.08] to-transparent" />
-
-          <GoalCard
+          <LiquidPanel
             accent="reach"
             label="Reach"
             meta={`TikTok · ${goals.windowDays}d`}
@@ -109,7 +108,7 @@ export default function Dashboard() {
             format={(n) => formatCompact(n)}
             status={views?.status ?? "ok"}
             loading={loading}
-            mirror
+            delay={0.2}
           />
         </div>
       </section>
