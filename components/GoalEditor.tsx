@@ -187,7 +187,7 @@ export default function GoalEditor({ open, goals, onClose, onSaved }: Props) {
                 <button
                   type="submit"
                   disabled={saving}
-                  className="rounded-xl bg-gradient-to-r from-money to-reach px-5 py-2.5 text-sm font-semibold text-white shadow-[0_6px_18px_-4px_rgba(99,102,241,0.5)] transition hover:brightness-105 active:scale-[0.98] disabled:opacity-60"
+                  className="rounded-xl bg-ink px-5 py-2.5 text-sm font-semibold text-bg shadow-[0_6px_18px_-6px_rgba(255,255,255,0.35)] transition hover:bg-white active:scale-[0.98] disabled:opacity-60"
                 >
                   {saving ? "Enregistrement…" : "Enregistrer"}
                 </button>

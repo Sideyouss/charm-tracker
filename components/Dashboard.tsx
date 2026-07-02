@@ -24,7 +24,8 @@ export default function Dashboard() {
   const [error, setError] = useState<string | null>(null);
   const [lastSync, setLastSync] = useState<string | null>(null);
   const [editing, setEditing] = useState(false);
-  const [, forceTick] = useState(0);
+  // Set after mount, refreshed every second: drives the clock and "timeAgo".
+  const [now, setNow] = useState<Date | null>(null);
 
   const load = useCallback(async () => {
     try {
@@ -50,7 +51,8 @@ export default function Dashboard() {
   }, [load]);
 
   useEffect(() => {
-    const id = setInterval(() => forceTick((n) => n + 1), 1000);
+    setNow(new Date());
+    const id = setInterval(() => setNow(new Date()), 1000);
     return () => clearInterval(id);
   }, []);
 
@@ -98,24 +100,38 @@ export default function Dashboard() {
         </div>
       </motion.header>
 
-      {/* ── Hero: tagline + overall progress ────────────────── */}
+      {/* ── Hero: tagline + overall life line ───────────────── */}
       <motion.div
         initial={{ opacity: 0, y: 14 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.55, delay: 0.05, ease }}
         className="mt-9 sm:mt-12"
       >
-        <h1 className="max-w-2xl text-balance font-display text-[1.7rem] font-semibold leading-tight tracking-tight text-ink sm:text-[2.2rem]">
+        <p className="text-sm italic text-ink-400">le miroir de tes objectifs</p>
+        <h1 className="mt-2 max-w-2xl text-balance font-display text-[1.8rem] font-semibold leading-tight tracking-tight text-ink sm:text-[2.4rem]">
           {goals.tagline}
         </h1>
-        <div className="mt-5 flex items-center gap-4">
-          <div className="h-2 flex-1 overflow-hidden rounded-full bg-white/[0.07]">
+        <div className="mt-6 flex items-center gap-4">
+          <div className="relative h-2.5 flex-1 overflow-hidden rounded-full bg-white/[0.07]">
             <motion.div
-              className="h-full rounded-full bg-gradient-to-r from-money via-sky-400 to-reach shadow-[0_0_12px_rgba(99,102,241,0.6)]"
+              className="relative h-full overflow-hidden rounded-full bg-gradient-to-r from-money to-reach shadow-[0_0_14px_rgba(240,180,41,0.35)]"
               initial={{ width: 0 }}
               animate={{ width: `${overall}%` }}
               transition={{ duration: 1.4, ease, delay: 0.2 }}
-            />
+            >
+              <span className="lifeline-shine" aria-hidden />
+            </motion.div>
+            {/* Milestone dots along the line. */}
+            {[25, 50, 75].map((m) => (
+              <span
+                key={m}
+                className={`absolute top-1/2 h-1 w-1 -translate-x-1/2 -translate-y-1/2 rounded-full ${
+                  overall >= m ? "bg-white/80" : "bg-white/25"
+                }`}
+                style={{ left: `${m}%` }}
+                aria-hidden
+              />
+            ))}
           </div>
           <span className="tnum text-sm font-semibold text-ink-700">
             {loading ? "—" : `${overall}% des deux objectifs`}
@@ -162,7 +178,11 @@ export default function Dashboard() {
         className="mt-8 flex items-center justify-between text-xs text-ink-400"
       >
         <span>Mise à jour automatique toutes les {Math.round(REFRESH_INTERVAL_MS / 1000)} secondes</span>
-        <span>{goals.team}</span>
+        <span className="tnum font-mono">
+          {now
+            ? now.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit", second: "2-digit" })
+            : goals.team}
+        </span>
       </motion.footer>
 
       <GoalEditor
@@ -178,8 +198,8 @@ export default function Dashboard() {
 /** A small rounded gradient sparkle — the Charm mark. */
 function CharmMark() {
   return (
-    <span className="grid h-9 w-9 place-items-center rounded-[0.7rem] bg-gradient-to-br from-money to-reach shadow-[0_4px_12px_-2px_rgba(99,102,241,0.5)]">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="white" aria-hidden>
+    <span className="grid h-9 w-9 place-items-center rounded-[0.7rem] bg-gradient-to-br from-money to-reach shadow-[0_4px_14px_-2px_rgba(240,180,41,0.45)]">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="#06070d" aria-hidden>
         <path d="M12 2 L14.6 9.4 L22 12 L14.6 14.6 L12 22 L9.4 14.6 L2 12 L9.4 9.4 Z" />
       </svg>
     </span>
