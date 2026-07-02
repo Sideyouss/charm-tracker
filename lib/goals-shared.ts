@@ -3,6 +3,7 @@ import { BRAND, GOALS as DEFAULTS } from "./config";
 /**
  * Client-safe goal types + defaults. No node imports here, so this can be
  * pulled into client components. Server-only persistence lives in goals.ts.
+ * Targets are monthly: both goals track the ongoing calendar month.
  */
 export interface GoalsConfig {
   team: string;
@@ -10,7 +11,6 @@ export interface GoalsConfig {
   revenueTarget: number;
   currency: string;
   viewsTarget: number;
-  windowDays: number;
 }
 
 export const DEFAULT_GOALS: GoalsConfig = {
@@ -19,7 +19,6 @@ export const DEFAULT_GOALS: GoalsConfig = {
   revenueTarget: DEFAULTS.revenue.target,
   currency: DEFAULTS.revenue.currency,
   viewsTarget: DEFAULTS.views.target,
-  windowDays: DEFAULTS.views.windowDays,
 };
 
 /** Clamp/normalise so a bad edit can't break the dashboard. */
@@ -37,9 +36,5 @@ export function sanitize(g: GoalsConfig): GoalsConfig {
     revenueTarget: Math.round(num(g.revenueTarget, DEFAULT_GOALS.revenueTarget)),
     currency: str(g.currency, DEFAULT_GOALS.currency, 3).toUpperCase(),
     viewsTarget: Math.round(num(g.viewsTarget, DEFAULT_GOALS.viewsTarget)),
-    windowDays: Math.min(
-      365,
-      Math.max(1, Math.round(num(g.windowDays, DEFAULT_GOALS.windowDays))),
-    ),
   };
 }

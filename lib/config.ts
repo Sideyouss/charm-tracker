@@ -1,6 +1,7 @@
 /**
  * Central place to tune the dashboard.
  * The numeric goals here are placeholders — change them to your real targets.
+ * Both goals are measured over the ongoing calendar month and reset on the 1st.
  */
 
 export const BRAND = {
@@ -10,19 +11,13 @@ export const BRAND = {
 
 export const GOALS = {
   revenue: {
-    /** The money objective you're driving toward (placeholder). */
+    /** Revenue target for the ongoing month (placeholder). */
     target: 100_000,
     currency: "USD",
-    label: "Revenue generated",
-    objectiveLabel: "Objective",
   },
   views: {
-    /** Target views inside the rolling window (placeholder). */
+    /** Views target for the ongoing month (placeholder). */
     target: 5_000_000,
-    /** Rolling window the view goal is measured over. */
-    windowDays: 30,
-    label: "Views",
-    objectiveLabel: "30-day target",
   },
 };
 

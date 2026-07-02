@@ -36,7 +36,6 @@ export async function POST(req: Request) {
     revenueTarget: body.revenueTarget as number,
     currency: body.currency as string,
     viewsTarget: body.viewsTarget as number,
-    windowDays: body.windowDays as number,
   });
 
   return NextResponse.json(goals, { headers: { "Cache-Control": "no-store" } });

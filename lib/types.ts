@@ -1,13 +1,15 @@
 export type MetricStatus = "ok" | "stale" | "error";
 
 export interface RevenuePayload {
-  /** Total money generated "so far" in the smallest sensible unit: whole currency. */
+  /** Revenue generated during the ongoing calendar month, in whole currency. */
   total: number;
   currency: string;
-  /** Revenue earned in the trailing 28 days, when available from the source. */
-  trailing28: number | null;
   /** Monthly recurring revenue, when available. */
   mrr: number | null;
+  /** ISO date the month window opened (the 1st). */
+  since: string;
+  /** True when the month-to-date figure is derived rather than exact. */
+  estimated: boolean;
   source: string;
   status: MetricStatus;
   updatedAt: string;
@@ -15,9 +17,10 @@ export interface RevenuePayload {
 }
 
 export interface ViewsPayload {
-  /** Total views inside the configured rolling window. */
+  /** Total views of videos posted during the ongoing calendar month. */
   total: number;
-  windowDays: number;
+  /** ISO date the month window opened (the 1st). */
+  since: string;
   /** Number of videos counted toward the total. */
   videoCount: number;
   source: string;

@@ -5,12 +5,9 @@
 :root {
   color-scheme: dark;
 
-  --bg: #06070d;
-  --ink: #f2f3f7;
-  --money-1: 240, 180, 41;   /* gold */
-  --money-2: 253, 224, 132;  /* pale gold */
-  --reach-1: 34, 211, 238;   /* cyan */
-  --reach-2: 125, 211, 252;  /* ice */
+  --bg: #0b0b0c;
+  --ink: #f2f3f5;
+  --accent: 240, 180, 41; /* signal amber */
 }
 
 html,
@@ -21,109 +18,64 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-/* Slow-breathing aurora — gold rising on one side, ice on the other. */
-body::before {
-  content: "";
-  position: fixed;
-  inset: -20%;
-  z-index: -2;
-  pointer-events: none;
-  background:
-    radial-gradient(42rem 30rem at 12% 8%, rgba(var(--money-1), 0.13), transparent 62%),
-    radial-gradient(36rem 26rem at 28% 96%, rgba(var(--money-2), 0.06), transparent 60%),
-    radial-gradient(44rem 32rem at 90% 90%, rgba(var(--reach-1), 0.13), transparent 62%),
-    radial-gradient(36rem 26rem at 96% 12%, rgba(var(--reach-2), 0.08), transparent 60%);
-  filter: blur(8px) saturate(115%);
-  animation: aurora 26s ease-in-out infinite alternate;
-}
-
-/* Fine film grain — the texture that keeps dark UIs from looking flat. */
+/* Fine film grain — keeps the big flat black from looking dead. */
 body::after {
   content: "";
   position: fixed;
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  opacity: 0.04;
+  opacity: 0.035;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-}
-
-@keyframes aurora {
-  0%   { transform: translate3d(0, 0, 0) scale(1); }
-  50%  { transform: translate3d(2%, -2%, 0) scale(1.05); }
-  100% { transform: translate3d(-2%, 2%, 0) scale(1.03); }
-}
-
-/* The bloom behind each ring inhales and exhales. */
-@keyframes breathe {
-  0%, 100% { opacity: 0.55; transform: scale(1); }
-  50%      { opacity: 0.95; transform: scale(1.08); }
-}
-.breathe {
-  animation: breathe 5s ease-in-out infinite;
-}
-
-/* Embers / frost motes drifting up through the cards. */
-@keyframes float-up {
-  0%   { transform: translateY(0) scale(1); opacity: 0; }
-  12%  { opacity: var(--po, 0.5); }
-  78%  { opacity: var(--po, 0.5); }
-  100% { transform: translateY(-440px) scale(0.35); opacity: 0; }
-}
-.particle {
-  position: absolute;
-  bottom: -6px;
-  border-radius: 9999px;
-  pointer-events: none;
-  animation: float-up var(--pd, 11s) linear infinite;
-  animation-delay: var(--pdelay, 0s);
-  will-change: transform, opacity;
-}
-
-/* Light pulse traveling along the overall progress line. */
-@keyframes shine-travel {
-  0%   { transform: translateX(-3rem); }
-  100% { transform: translateX(calc(100% + 48rem)); }
-}
-.lifeline-shine {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  width: 3rem;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.55), transparent);
-  animation: shine-travel 3.2s ease-in-out infinite;
 }
 
 .tnum {
   font-variant-numeric: tabular-nums;
 }
 
-.text-gradient {
-  -webkit-background-clip: text;
-  background-clip: text;
+/* Hollow display type — the percentage as a stroke, not a fill. */
+.text-outline {
+  -webkit-text-stroke: 2px rgba(242, 243, 245, 0.32);
+  color: transparent;
+}
+.text-outline-accent {
+  -webkit-text-stroke: 2px rgba(var(--accent), 0.9);
   color: transparent;
 }
 
-/* Frosted glass surface for the cards. */
-.glass {
-  background:
-    linear-gradient(165deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.015) 45%, rgba(255, 255, 255, 0.03));
-  backdrop-filter: blur(14px) saturate(130%);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.08),
-    0 24px 60px -28px rgba(0, 0, 0, 0.85);
+/* Light sweep riding the filled part of each bar. */
+@keyframes bar-shine {
+  0%   { transform: translateX(-3rem); }
+  100% { transform: translateX(calc(100% + 60rem)); }
+}
+.bar-shine {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 3rem;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+  animation: bar-shine 3.4s ease-in-out infinite;
+}
+
+/* Stadium ticker: two identical halves, slide one full half. */
+@keyframes marquee {
+  to { transform: translateX(-50%); }
+}
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 45s linear infinite;
+  will-change: transform;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  body::before { animation: none; }
-  .breathe { animation: none; }
-  .particle { animation: none; opacity: 0; }
-  .lifeline-shine { animation: none; opacity: 0; }
+  .bar-shine { animation: none; opacity: 0; }
+  .marquee-track { animation: none; }
 }
 
 ::selection {
-  background: rgba(var(--reach-1), 0.32);
+  background: rgba(var(--accent), 0.35);
 }
 
 ::-webkit-scrollbar { width: 10px; height: 10px; }

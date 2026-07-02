@@ -1,13 +1,12 @@
 import type { Metadata } from "next";
 import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
-import { Space_Grotesk } from "next/font/google";
+import { Archivo } from "next/font/google";
 import { BRAND } from "@/lib/config";
 import "./globals.css";
 
-const display = Space_Grotesk({
+const display = Archivo({
   subsets: ["latin"],
-  weight: ["500", "600", "700"],
   variable: "--font-display",
 });
 

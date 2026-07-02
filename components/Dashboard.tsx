@@ -6,7 +6,8 @@ import { REFRESH_INTERVAL_MS } from "@/lib/config";
 import { DEFAULT_GOALS, type GoalsConfig } from "@/lib/goals-shared";
 import type { RevenuePayload, ViewsPayload } from "@/lib/types";
 import { formatCompact, formatMoney, formatInt, timeAgo } from "@/lib/format";
-import GoalDial, { type Chip } from "./GoalDial";
+import { dayOfMonth, daysInMonth, monthLabel } from "@/lib/month";
+import GoalRow, { type Chip } from "./GoalRow";
 import GoalEditor from "./GoalEditor";
 
 async function fetchJson<T>(url: string): Promise<T> {
@@ -16,6 +17,17 @@ async function fetchJson<T>(url: string): Promise<T> {
 }
 
 const ease = [0.16, 1, 0.3, 1] as const;
+
+/** A short line that changes as a goal gets closer — the mirror talks back. */
+function encouragement(pct: number): string {
+  if (pct >= 100) return "objectif atteint — fixe le prochain";
+  if (pct < 10) return "tout commence ici";
+  if (pct < 25) return "l'élan se construit";
+  if (pct < 50) return "le cap du quart est franchi";
+  if (pct < 75) return "plus de la moitié du chemin";
+  if (pct < 90) return "la ligne d'arrivée est en vue";
+  return "derniers mètres — tout donner";
+}
 
 export default function Dashboard() {
   const [goals, setGoals] = useState<GoalsConfig>(DEFAULT_GOALS);
@@ -59,130 +71,133 @@ export default function Dashboard() {
   const loading = !revenue && !views;
   const currency = revenue?.currency ?? goals.currency;
 
-  // A single combined "how are we doing" figure for the header.
   const revPct = goals.revenueTarget > 0 ? Math.min(100, ((revenue?.total ?? 0) / goals.revenueTarget) * 100) : 0;
   const viewPct = goals.viewsTarget > 0 ? Math.min(100, ((views?.total ?? 0) / goals.viewsTarget) * 100) : 0;
   const overall = Math.round((revPct + viewPct) / 2);
 
+  // Month context: day 2 of 31, 29 days left, etc.
+  const day = dayOfMonth();
+  const totalDays = daysInMonth();
+  const month = monthLabel();
+
   const moneyChips: Chip[] = [];
   if (revenue?.mrr != null) moneyChips.push({ label: "MRR", value: formatMoney(revenue.mrr, currency) });
-  if (revenue?.trailing28 != null)
-    moneyChips.push({ label: "28 derniers jours", value: formatMoney(revenue.trailing28, currency) });
+  if (revenue?.total != null)
+    moneyChips.push({ label: "Rythme / jour", value: formatMoney(revenue.total / Math.max(1, day), currency) });
 
   const reachChips: Chip[] = [];
   if (views?.videoCount != null)
-    reachChips.push({ label: "Vidéos", value: formatInt(views.videoCount) });
+    reachChips.push({ label: "Vidéos ce mois-ci", value: formatInt(views.videoCount) });
   if (views?.total != null)
-    reachChips.push({ label: `Moy. / vidéo`, value: formatCompact(views.videoCount ? views.total / views.videoCount : 0) });
+    reachChips.push({ label: "Rythme / jour", value: formatCompact(views.total / Math.max(1, day)) });
+
+  const tickerItems = loading
+    ? [goals.tagline]
+    : [
+        goals.tagline,
+        `${month} — jour ${day} sur ${totalDays}, reste ${totalDays - day} jours`,
+        `revenus ${Math.round(revPct)}% — ${encouragement(revPct)}`,
+        `vues ${Math.round(viewPct)}% — ${encouragement(viewPct)}`,
+        `global ${overall}% des deux objectifs du mois`,
+        `mise à jour automatique toutes les ${Math.round(REFRESH_INTERVAL_MS / 1000)} s`,
+      ];
 
   return (
-    <main className="mx-auto flex min-h-[100dvh] w-full max-w-5xl flex-col px-5 py-7 sm:px-8 sm:py-10">
-      {/* ── Top bar ─────────────────────────────────────────── */}
-      <motion.header
-        initial={{ opacity: 0, y: -12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, ease }}
-        className="flex items-center justify-between"
-      >
-        <div className="flex items-center gap-2.5">
-          <CharmMark />
-          <span className="font-display text-lg font-bold tracking-tight text-ink">{goals.team}</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <SyncBadge lastSync={lastSync} error={error} onRefresh={load} />
-          <button
-            onClick={() => setEditing(true)}
-            className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.05] px-4 py-1.5 text-sm font-medium text-ink-700 backdrop-blur-sm transition hover:border-white/25 hover:bg-white/[0.09] active:scale-95"
-          >
-            <PencilIcon />
-            Modifier les objectifs
-          </button>
-        </div>
-      </motion.header>
-
-      {/* ── Hero: tagline + overall life line ───────────────── */}
-      <motion.div
-        initial={{ opacity: 0, y: 14 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.55, delay: 0.05, ease }}
-        className="mt-9 sm:mt-12"
-      >
-        <p className="text-sm italic text-ink-400">le miroir de tes objectifs</p>
-        <h1 className="mt-2 max-w-2xl text-balance font-display text-[1.8rem] font-semibold leading-tight tracking-tight text-ink sm:text-[2.4rem]">
-          {goals.tagline}
-        </h1>
-        <div className="mt-6 flex items-center gap-4">
-          <div className="relative h-2.5 flex-1 overflow-hidden rounded-full bg-white/[0.07]">
-            <motion.div
-              className="relative h-full overflow-hidden rounded-full bg-gradient-to-r from-money to-reach shadow-[0_0_14px_rgba(240,180,41,0.35)]"
-              initial={{ width: 0 }}
-              animate={{ width: `${overall}%` }}
-              transition={{ duration: 1.4, ease, delay: 0.2 }}
-            >
-              <span className="lifeline-shine" aria-hidden />
-            </motion.div>
-            {/* Milestone dots along the line. */}
-            {[25, 50, 75].map((m) => (
-              <span
-                key={m}
-                className={`absolute top-1/2 h-1 w-1 -translate-x-1/2 -translate-y-1/2 rounded-full ${
-                  overall >= m ? "bg-white/80" : "bg-white/25"
-                }`}
-                style={{ left: `${m}%` }}
-                aria-hidden
-              />
-            ))}
-          </div>
-          <span className="tnum text-sm font-semibold text-ink-700">
-            {loading ? "—" : `${overall}% des deux objectifs`}
-          </span>
-        </div>
-      </motion.div>
-
-      {/* ── The two dials ───────────────────────────────────── */}
-      <div className="mt-9 grid flex-1 grid-cols-1 content-center gap-5 py-2 md:grid-cols-2 sm:mt-10">
-        <GoalDial
-          accent="money"
-          icon="money"
-          label="Revenus"
-          meta="via RevenueCat"
-          current={revenue?.total ?? 0}
-          target={goals.revenueTarget}
-          format={(n) => formatMoney(n, currency)}
-          status={revenue?.status ?? "ok"}
-          loading={loading}
-          chips={moneyChips}
-          delay={0.1}
-        />
-
-        <GoalDial
-          accent="reach"
-          icon="reach"
-          label="Vues"
-          meta={`TikTok · ${goals.windowDays} derniers jours`}
-          current={views?.total ?? 0}
-          target={goals.viewsTarget}
-          format={(n) => formatCompact(n)}
-          status={views?.status ?? "ok"}
-          loading={loading}
-          chips={reachChips}
-          delay={0.2}
+    <div className="flex min-h-[100dvh] flex-col">
+      {/* ── Overall progress: a thin signal strip on the screen's top edge ── */}
+      <div className="fixed inset-x-0 top-0 z-50 h-[3px] bg-white/[0.06]">
+        <motion.div
+          className="h-full bg-accent shadow-[0_0_10px_rgba(240,180,41,0.8)]"
+          initial={{ width: 0 }}
+          animate={{ width: `${overall}%` }}
+          transition={{ duration: 1.4, ease, delay: 0.2 }}
         />
       </div>
 
-      {/* ── Footer ──────────────────────────────────────────── */}
+      <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col px-5 sm:px-10">
+        {/* ── Masthead ──────────────────────────────────────── */}
+        <motion.header
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease }}
+          className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 border-b border-white/10 py-4 sm:py-6"
+        >
+          <span className="font-display text-xl font-black uppercase tracking-[-0.01em] text-ink">
+            {goals.team}
+            <span className="text-accent">.</span>
+          </span>
+          <div className="flex items-center gap-4">
+            <SyncBadge lastSync={lastSync} error={error} onRefresh={load} />
+            <span className="tnum hidden font-mono text-xs text-ink-500 sm:inline" suppressHydrationWarning>
+              {now
+                ? now.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit", second: "2-digit" })
+                : ""}
+            </span>
+            <button
+              onClick={() => setEditing(true)}
+              className="border border-white/15 px-3 py-1.5 font-mono text-[0.7rem] uppercase tracking-[0.18em] text-ink-700 transition hover:border-accent/70 hover:text-accent active:scale-95"
+            >
+              modifier
+            </button>
+          </div>
+        </motion.header>
+
+        {/* ── Tagline ───────────────────────────────────────── */}
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+          className="mt-6 max-w-2xl text-balance text-sm italic text-ink-500 sm:text-base"
+        >
+          {goals.tagline}
+        </motion.p>
+
+        {/* ── The two figures ───────────────────────────────── */}
+        <div className="flex flex-1 flex-col justify-center divide-y divide-white/10">
+          <GoalRow
+            label="Revenus"
+            meta={`RevenueCat · ${month}${revenue?.estimated ? " · estimation" : ""}`}
+            current={revenue?.total ?? 0}
+            target={goals.revenueTarget}
+            format={(n) => formatMoney(n, currency)}
+            status={revenue?.status ?? "ok"}
+            loading={loading}
+            chips={moneyChips}
+            delay={0.15}
+          />
+
+          <GoalRow
+            label="Vues"
+            meta={`TikTok · ${month}`}
+            current={views?.total ?? 0}
+            target={goals.viewsTarget}
+            format={(n) => formatCompact(n)}
+            status={views?.status ?? "ok"}
+            loading={loading}
+            chips={reachChips}
+            delay={0.3}
+          />
+        </div>
+      </main>
+
+      {/* ── Stadium ticker ──────────────────────────────────── */}
       <motion.footer
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ duration: 0.6, delay: 0.4 }}
-        className="mt-8 flex items-center justify-between text-xs text-ink-400"
+        transition={{ duration: 0.6, delay: 0.5 }}
+        className="overflow-hidden border-t border-white/10 py-3"
+        aria-hidden
       >
-        <span>Mise à jour automatique toutes les {Math.round(REFRESH_INTERVAL_MS / 1000)} secondes</span>
-        <span className="tnum font-mono">
-          {now
-            ? now.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit", second: "2-digit" })
-            : goals.team}
-        </span>
+        <div className="marquee-track">
+          {[...tickerItems, ...tickerItems].map((item, i) => (
+            <span
+              key={i}
+              className="whitespace-nowrap pr-12 font-mono text-xs uppercase tracking-[0.2em] text-ink-500"
+            >
+              {item} <span className="pl-12 text-accent">◆</span>
+            </span>
+          ))}
+        </div>
       </motion.footer>
 
       <GoalEditor
@@ -191,27 +206,7 @@ export default function Dashboard() {
         onClose={() => setEditing(false)}
         onSaved={(next) => setGoals(next)}
       />
-    </main>
-  );
-}
-
-/** A small rounded gradient sparkle — the Charm mark. */
-function CharmMark() {
-  return (
-    <span className="grid h-9 w-9 place-items-center rounded-[0.7rem] bg-gradient-to-br from-money to-reach shadow-[0_4px_14px_-2px_rgba(240,180,41,0.45)]">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="#06070d" aria-hidden>
-        <path d="M12 2 L14.6 9.4 L22 12 L14.6 14.6 L12 22 L9.4 14.6 L2 12 L9.4 9.4 Z" />
-      </svg>
-    </span>
-  );
-}
-
-function PencilIcon() {
-  return (
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-      <path d="M12 20h9" />
-      <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" />
-    </svg>
+    </div>
   );
 }
 
@@ -227,11 +222,13 @@ function SyncBadge({
   return (
     <button
       onClick={onRefresh}
-      className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-sm text-ink-400 transition hover:text-ink-700 active:scale-95"
+      className="inline-flex items-center gap-2 font-mono text-xs text-ink-500 transition hover:text-ink-700 active:scale-95"
       title="Actualiser"
     >
-      <span className={`h-1.5 w-1.5 rounded-full ${error ? "bg-red-500" : "bg-emerald-500"}`} />
-      <span className="tnum">{error ? "Échec de synchro" : lastSync ? `Synchronisé ${timeAgo(lastSync)}` : "Synchronisation…"}</span>
+      <span className={`h-1.5 w-1.5 rounded-full ${error ? "bg-red-500" : "bg-emerald-400"}`} />
+      <span className="tnum">
+        {error ? "échec de synchro" : lastSync ? `synchro ${timeAgo(lastSync)}` : "synchronisation…"}
+      </span>
     </button>
   );
 }

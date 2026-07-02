@@ -1,4 +1,5 @@
 import type { ViewsPayload } from "../types";
+import { monthStart } from "../month";
 
 export interface TikTokVideo {
   /** TikTok video id or full URL. */
@@ -34,29 +35,30 @@ export function videoIdFromUrl(url: string): string | null {
 }
 
 /**
- * Reduce a list of videos to the rolling-window total used by the dashboard.
- * Videos with a known postedAt outside the window are excluded; videos with
- * no date are always counted (you only added them because they're recent).
+ * Reduce a list of videos to the ongoing-calendar-month total used by the
+ * dashboard. Videos with a known postedAt before the 1st of this month are
+ * excluded; videos with no date are always counted (you only added them
+ * because they're recent).
  */
 export function summariseViews(
   videos: TikTokVideo[],
-  windowDays: number,
   source: string,
   note?: string,
 ): ViewsPayload {
-  const cutoff = Date.now() - windowDays * 24 * 60 * 60 * 1000;
-  const inWindow = videos.filter((v) => {
+  const since = monthStart();
+  const cutoff = since.getTime();
+  const inMonth = videos.filter((v) => {
     if (!v.postedAt) return true;
     const t = Date.parse(v.postedAt);
     return Number.isNaN(t) ? true : t >= cutoff;
   });
 
-  const total = inWindow.reduce((sum, v) => sum + (v.views || 0), 0);
+  const total = inMonth.reduce((sum, v) => sum + (v.views || 0), 0);
 
   return {
     total,
-    windowDays,
-    videoCount: inWindow.length,
+    since: since.toISOString(),
+    videoCount: inMonth.length,
     source,
     status: "ok",
     updatedAt: new Date().toISOString(),

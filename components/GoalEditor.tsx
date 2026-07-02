@@ -67,13 +67,13 @@ export default function GoalEditor({ open, goals, onClose, onSaved }: Props) {
     <AnimatePresence>
       {open && (
         <motion.div
-          className="fixed inset-0 z-40 flex items-center justify-center px-4"
+          className="fixed inset-0 z-[60] flex items-center justify-center px-4"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
         >
           <div
-            className="absolute inset-0 bg-black/65 backdrop-blur-md"
+            className="absolute inset-0 bg-black/70 backdrop-blur-sm"
             onClick={onClose}
             aria-hidden
           />
@@ -85,16 +85,20 @@ export default function GoalEditor({ open, goals, onClose, onSaved }: Props) {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 16, scale: 0.98 }}
             transition={{ type: "spring", stiffness: 240, damping: 24 }}
-            className="glass relative w-full max-w-lg rounded-3xl p-7"
+            className="relative w-full max-w-lg border border-white/12 bg-[#101012] p-7"
           >
             <header className="flex items-start justify-between">
               <div>
-                <h2 className="font-display text-xl font-bold tracking-tight text-ink">Modifier les objectifs</h2>
-                <p className="mt-1 text-sm text-ink-400">Les modifications sont visibles par toute l'équipe.</p>
+                <h2 className="font-display text-lg font-black uppercase tracking-tight text-ink">
+                  Modifier les objectifs
+                </h2>
+                <p className="mt-1 text-sm text-ink-400">
+                  Objectifs du mois en cours — le suivi repart de zéro le 1er. Visibles par toute l'équipe.
+                </p>
               </div>
               <button
                 onClick={onClose}
-                className="grid h-8 w-8 place-items-center rounded-full text-ink-400 transition hover:bg-white/10 hover:text-ink"
+                className="grid h-8 w-8 place-items-center text-ink-400 transition hover:bg-white/10 hover:text-ink"
                 aria-label="Fermer"
               >
                 ✕
@@ -119,7 +123,7 @@ export default function GoalEditor({ open, goals, onClose, onSaved }: Props) {
                 />
               </Field>
 
-              <Field label="Objectif de revenus">
+              <Field label="Objectif de revenus (mois)">
                 <input
                   type="number"
                   min={1}
@@ -138,23 +142,12 @@ export default function GoalEditor({ open, goals, onClose, onSaved }: Props) {
                 />
               </Field>
 
-              <Field label="Objectif de vues">
+              <Field className="col-span-2" label="Objectif de vues (mois)">
                 <input
                   type="number"
                   min={1}
                   value={form.viewsTarget}
                   onChange={(e) => set("viewsTarget", Number(e.target.value))}
-                  className={`${inputCls} tnum`}
-                />
-              </Field>
-
-              <Field label="Fenêtre (jours)">
-                <input
-                  type="number"
-                  min={1}
-                  max={365}
-                  value={form.windowDays}
-                  onChange={(e) => set("windowDays", Number(e.target.value))}
                   className={`${inputCls} tnum`}
                 />
               </Field>
@@ -171,7 +164,7 @@ export default function GoalEditor({ open, goals, onClose, onSaved }: Props) {
               </Field>
 
               {error && (
-                <p className="col-span-2 rounded-xl border border-red-400/25 bg-red-500/10 px-3 py-2 text-sm text-red-300">
+                <p className="col-span-2 border border-red-400/25 bg-red-500/10 px-3 py-2 text-sm text-red-300">
                   {error}
                 </p>
               )}
@@ -180,14 +173,14 @@ export default function GoalEditor({ open, goals, onClose, onSaved }: Props) {
                 <button
                   type="button"
                   onClick={onClose}
-                  className="rounded-xl px-4 py-2.5 text-sm font-medium text-ink-500 transition hover:text-ink"
+                  className="px-4 py-2.5 font-mono text-xs uppercase tracking-[0.15em] text-ink-500 transition hover:text-ink"
                 >
                   Annuler
                 </button>
                 <button
                   type="submit"
                   disabled={saving}
-                  className="rounded-xl bg-ink px-5 py-2.5 text-sm font-semibold text-bg shadow-[0_6px_18px_-6px_rgba(255,255,255,0.35)] transition hover:bg-white active:scale-[0.98] disabled:opacity-60"
+                  className="bg-accent px-5 py-2.5 font-mono text-xs font-semibold uppercase tracking-[0.15em] text-accent-deep transition hover:brightness-110 active:scale-[0.98] disabled:opacity-60"
                 >
                   {saving ? "Enregistrement…" : "Enregistrer"}
                 </button>
@@ -201,7 +194,7 @@ export default function GoalEditor({ open, goals, onClose, onSaved }: Props) {
 }
 
 const inputCls =
-  "w-full rounded-xl border border-white/10 bg-white/[0.04] px-3.5 py-2.5 text-sm text-ink outline-none transition placeholder:text-ink-400 focus:border-reach/60 focus:bg-white/[0.07] focus:ring-2 focus:ring-reach/20";
+  "w-full border border-white/12 bg-white/[0.03] px-3.5 py-2.5 text-sm text-ink outline-none transition placeholder:text-ink-400 focus:border-accent/70 focus:bg-white/[0.06] focus:ring-2 focus:ring-accent/15";
 
 function Field({
   label,
@@ -214,7 +207,7 @@ function Field({
 }) {
   return (
     <label className={`flex flex-col gap-1.5 ${className ?? ""}`}>
-      <span className="text-sm font-medium text-ink-500">{label}</span>
+      <span className="font-mono text-[0.68rem] uppercase tracking-[0.18em] text-ink-500">{label}</span>
       {children}
     </label>
   );

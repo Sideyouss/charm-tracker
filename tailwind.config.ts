@@ -8,20 +8,17 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        bg: "#06070d",
+        bg: "#0b0b0c",
         ink: {
-          DEFAULT: "#f2f3f7",
-          700: "#c3c7d4",
-          500: "#8f94a6",
-          400: "#676d80",
+          DEFAULT: "#f2f3f5",
+          700: "#c6c8cd",
+          500: "#8e9097",
+          400: "#63656c",
         },
-        money: {
+        // The single signal color of the scoreboard.
+        accent: {
           DEFAULT: "#f0b429",
-          soft: "#fde084",
-        },
-        reach: {
-          DEFAULT: "#22d3ee",
-          soft: "#7dd3fc",
+          deep: "#221a04",
         },
       },
       fontFamily: {

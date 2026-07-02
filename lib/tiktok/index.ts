@@ -1,5 +1,5 @@
-import { getGoals } from "../goals";
 import type { ViewsPayload } from "../types";
+import { monthStart } from "../month";
 import { htmlProvider } from "./html";
 import { mockProvider } from "./mock";
 import { officialProvider } from "./official";
@@ -25,7 +25,6 @@ function pickProvider(): TikTokProvider {
 
 export async function getViews(): Promise<ViewsPayload> {
   const provider = pickProvider();
-  const { windowDays } = await getGoals();
 
   try {
     const videos = await provider.fetchVideos();
@@ -33,11 +32,11 @@ export async function getViews(): Promise<ViewsPayload> {
       provider.name === "demo"
         ? "Demo data. Set TIKTOK_PROVIDER + video sources to go live."
         : undefined;
-    return summariseViews(videos, windowDays, provider.name, note);
+    return summariseViews(videos, provider.name, note);
   } catch (err) {
     return {
       total: 0,
-      windowDays,
+      since: monthStart().toISOString(),
       videoCount: 0,
       source: provider.name,
       status: "error",
