@@ -5,8 +5,9 @@ import { getRevenue } from "@/lib/revenuecat";
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-export async function GET() {
-  const data = await getRevenue();
+export async function GET(req: Request) {
+  const debug = new URL(req.url).searchParams.has("debug");
+  const data = await getRevenue(debug);
   return NextResponse.json(data, {
     headers: { "Cache-Control": "no-store" },
   });

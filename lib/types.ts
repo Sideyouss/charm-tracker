@@ -14,6 +14,8 @@ export interface RevenuePayload {
   status: MetricStatus;
   updatedAt: string;
   note?: string;
+  /** Step-by-step trace of the upstream calls; present with ?debug=1. */
+  debug?: string[];
 }
 
 export interface ViewsPayload {
