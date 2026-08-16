@@ -1,55 +1,55 @@
 {
-  "generatedAt": "2026-08-15T23:42:49.550Z",
-  "total": 8000406,
-  "videoCount": 21,
+  "generatedAt": "2026-08-16T00:58:58.359Z",
+  "total": 7639215,
+  "videoCount": 20,
   "videos": [
     {
       "id": "7674388119071837472",
       "url": "https://www.tiktok.com/@saly.chats/video/7674388119071837472",
       "uploader": "saly.chats",
-      "views": 1906,
+      "views": 2415,
       "postedAt": "2026-08-15T22:25:30.000Z"
     },
     {
       "id": "7673572363694345504",
       "url": "https://www.tiktok.com/@saly.chats/video/7673572363694345504",
       "uploader": "saly.chats",
-      "views": 86900,
+      "views": 87200,
       "postedAt": "2026-08-13T17:39:56.000Z"
     },
     {
       "id": "7665092841567259937",
       "url": "https://www.tiktok.com/@saly.chats/video/7665092841567259937",
       "uploader": "saly.chats",
-      "views": 207000,
+      "views": 207200,
       "postedAt": "2026-07-21T21:15:04.000Z"
     },
     {
       "id": "7664246657487310112",
       "url": "https://www.tiktok.com/@saly.chats/video/7664246657487310112",
       "uploader": "saly.chats",
-      "views": 429600,
+      "views": 429700,
       "postedAt": "2026-07-19T14:31:25.000Z"
     },
     {
       "id": "7663546759028755745",
       "url": "https://www.tiktok.com/@saly.chats/video/7663546759028755745",
       "uploader": "saly.chats",
-      "views": 320200,
+      "views": 320300,
       "postedAt": "2026-07-17T17:15:29.000Z"
     },
     {
       "id": "7662443649170459936",
       "url": "https://www.tiktok.com/@saly.chats/video/7662443649170459936",
       "uploader": "saly.chats",
-      "views": 118200,
+      "views": 118300,
       "postedAt": "2026-07-14T17:54:52.000Z"
     },
     {
       "id": "7662092441519934752",
       "url": "https://www.tiktok.com/@saly.chats/video/7662092441519934752",
       "uploader": "saly.chats",
-      "views": 493600,
+      "views": 493700,
       "postedAt": "2026-07-13T19:11:58.000Z"
     },
     {
@@ -105,7 +105,7 @@
       "id": "7658295417372691745",
       "url": "https://www.tiktok.com/@saly.chats/video/7658295417372691745",
       "uploader": "saly.chats",
-      "views": 872700,
+      "views": 872900,
       "postedAt": "2026-07-03T13:37:35.000Z"
     },
     {
@@ -142,13 +142,6 @@
       "uploader": "saly.chats",
       "views": 386100,
       "postedAt": "2026-06-19T19:01:47.000Z"
-    },
-    {
-      "id": "7652023718343937313",
-      "url": "https://www.tiktok.com/@saly.chats/video/7652023718343937313",
-      "uploader": "saly.chats",
-      "views": 362800,
-      "postedAt": "2026-06-16T16:00:12.000Z"
     }
   ]
 }
