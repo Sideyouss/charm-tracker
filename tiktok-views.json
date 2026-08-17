@@ -1,20 +1,20 @@
 {
-  "generatedAt": "2026-08-17T04:11:09.733Z",
-  "total": 7673428,
+  "generatedAt": "2026-08-17T05:06:46.318Z",
+  "total": 7673760,
   "videoCount": 20,
   "videos": [
     {
       "id": "7674388119071837472",
       "url": "https://www.tiktok.com/@saly.chats/video/7674388119071837472",
       "uploader": "saly.chats",
-      "views": 9828,
+      "views": 9860,
       "postedAt": "2026-08-15T22:25:30.000Z"
     },
     {
       "id": "7673572363694345504",
       "url": "https://www.tiktok.com/@saly.chats/video/7673572363694345504",
       "uploader": "saly.chats",
-      "views": 94200,
+      "views": 94300,
       "postedAt": "2026-08-13T17:39:56.000Z"
     },
     {
@@ -112,7 +112,7 @@
       "id": "7655848809536163104",
       "url": "https://www.tiktok.com/@saly.chats/video/7655848809536163104",
       "uploader": "saly.chats",
-      "views": 379300,
+      "views": 379400,
       "postedAt": "2026-06-26T23:23:33.000Z"
     },
     {
@@ -140,7 +140,7 @@
       "id": "7653183770706693409",
       "url": "https://www.tiktok.com/@saly.chats/video/7653183770706693409",
       "uploader": "saly.chats",
-      "views": 386500,
+      "views": 386600,
       "postedAt": "2026-06-19T19:01:47.000Z"
     }
   ]
